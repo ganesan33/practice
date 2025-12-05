@@ -7,10 +7,13 @@ app = Flask(__name__)
 url = os.getenv("MONGO_URL")
 client = MongoClient(url)
 db = client.get_database('practice')
+collection = db.get_collection('devops')
+
 
 @app.route('/')
 def home():
-    return render_template('hello.html')
+    data = list(collection.find({}, {'_id': 0}))
+    return render_template('hello.html', data=data)
 
 @app.route('/status')
 def status():
@@ -20,6 +23,16 @@ def status():
 def hello(id):
     return jsonify(f"Hello {id} welcone to this page")
 
+@app.route('/add/<int:id>/<name>', methods=['POST','GET'])
+def add_data(id, name):
+    data = {"id": id, "name": name}
+    collection.insert_one(data)
+    return jsonify({"message": "Data added successfully", "data": data})
+
+@app.route('/get', methods=['GET'])
+def get_data():
+    data = list(collection.find({}, {'_id': 0}))
+    return jsonify(data)
 
 
 if __name__ == '__main__':
