@@ -18,14 +18,20 @@ def home():
 @app.route('/add', methods=['POST'])
 def add_data():
     try:
-        content = request.get_json()   # IMPORTANT
-        id = content["id"]
-        name = content["name"]
+        content = request.get_json()  # get JSON body safely
+        if not content:
+            return jsonify({"error": "JSON body required"}), 400
+
+        id = content.get("id")
+        name = content.get("name")
+
+        if id is None or name is None:
+            return jsonify({"error": "Both 'id' and 'name' are required"}), 400
 
         data = {"id": id, "name": name}
         collection.insert_one(data)
 
-         return jsonify({"message": "Data added successfully","data": data}), 201
+        return jsonify({"message": "Data added successfully", "data": data}), 201
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
