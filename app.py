@@ -20,17 +20,22 @@ def add_data():
     try:
         content = request.get_json()   # read JSON body
 
+        # Validate input
+        if not content or "id" not in content or "name" not in content:
+            return jsonify({"error": "Missing 'id' or 'name' in request"}), 400
+
         id = content["id"]
         name = content["name"]
 
         data = {"id": id, "name": name}
 
+        # Insert and ignore the result object
         collection.insert_one(data)
 
-        # DO NOT RETURN ObjectId → only return your clean dict
+        # Return only the clean dict (without ObjectId)
         return jsonify({
             "message": "Data added successfully",
-            "data": data
+            "data": {"id": id, "name": name}
         }), 201
 
     except Exception as e:
