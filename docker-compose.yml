@@ -1,6 +1,10 @@
+version: "3"
 services:
   api:
     build: .
+    container_name: practice_api
     ports:
       - "5000:5000"
+    environment:
+      - MONGO_URL=${MONGO_URL}
     restart: always
