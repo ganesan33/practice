@@ -17,7 +17,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.VPS_KEY }}" > ~/.ssh/id_rsa
 
-          # 🔥 FIX WINDOWS CRLF → UNIX LF
+          # 🔥 Fix Windows CRLF → Linux LF
           sed -i 's/\r$//' ~/.ssh/id_rsa
 
           chmod 600 ~/.ssh/id_rsa
@@ -33,7 +33,7 @@ jobs:
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
               cd ~/prac/practice &&
               git pull &&
-              docker-compose down &&
+              docker-compose down --remove-orphans &&
+              docker rm -f \$(docker ps -aq) || true &&
               docker-compose up -d --build
             "
-
