@@ -23,7 +23,7 @@ def status():
 def hello(id):
     return jsonify(f"Hello {id} welcone to this page")
 
-@app.route('/add/<int:id>/<name>', methods=['POST','GET'])
+@app.route('/add/<int:id>/<name>', methods=['GET'])
 def add_data(id, name):
     data = {"id": id, "name": name}
     collection.insert_one(data)
