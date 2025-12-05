@@ -18,23 +18,24 @@ def home():
 @app.route('/add', methods=['POST'])
 def add_data():
     try:
-        content = request.get_json()  # get JSON body safely
-        if not content:
-            return jsonify({"error": "JSON body required"}), 400
+        content = request.get_json()   # read JSON body
 
-        id = content.get("id")
-        name = content.get("name")
-
-        if id is None or name is None:
-            return jsonify({"error": "Both 'id' and 'name' are required"}), 400
+        id = content["id"]
+        name = content["name"]
 
         data = {"id": id, "name": name}
+
         collection.insert_one(data)
 
-        return jsonify({"message": "Data added successfully", "data": data}), 201
+        # DO NOT RETURN ObjectId → only return your clean dict
+        return jsonify({
+            "message": "Data added successfully",
+            "data": data
+        }), 201
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/get', methods=['GET'])
 def get_data():
