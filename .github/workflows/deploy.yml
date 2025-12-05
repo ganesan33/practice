@@ -16,11 +16,16 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.VPS_KEY }}" > ~/.ssh/id_rsa
+
+          # 🔥 FIX WINDOWS CRLF → UNIX LF
+          sed -i 's/\r$//' ~/.ssh/id_rsa
+
           chmod 600 ~/.ssh/id_rsa
 
       - name: Test SSH connection
-        run: ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa \
-          ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "echo Connected Successfully"
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "echo Connected Successfully"
 
       - name: Deploy to VPS
         run: |
@@ -31,3 +36,4 @@ jobs:
               docker-compose down &&
               docker-compose up -d --build
             "
+
