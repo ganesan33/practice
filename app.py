@@ -17,18 +17,18 @@ def home():
 
 @app.route('/add', methods=['POST'])
 def add_data():
-    content = request.json
-    id = content["id"]
-    name = content["name"]
+    try:
+        content = request.get_json()   # IMPORTANT
+        id = content["id"]
+        name = content["name"]
 
-    data = {"id": id, "name": name}
-    result = collection.insert_one(data)
+        data = {"id": id, "name": name}
+        collection.insert_one(data)
 
-    return jsonify({
-        "message": "Data added successfully",
-        "data": data
-    })
+         return jsonify({"message": "Data added successfully","data": data}), 201
 
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/get', methods=['GET'])
 def get_data():
